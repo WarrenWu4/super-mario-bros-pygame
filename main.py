@@ -62,7 +62,7 @@ while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
                 pygame.quit()
-                sys.quit()
+                sys.exit()
             # if user clicks 'back' button moves then back to starting screen
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if btn3Pos[0] <= mouse[0] <= btn3Pos[0]+200 and btn3Pos[1] <= mouse[1] <= btn3Pos[1]+50:
