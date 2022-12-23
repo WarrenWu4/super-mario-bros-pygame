@@ -1,35 +1,98 @@
 import pygame
 import sys
-from userSettings import *
-from level import *
+
+from startScreen import *
+from instructionScreen import *
+
 from player import *
+from map import *
+
+# sprites = pygame.sprite.Group()
+
+# player = Player((1280/2, 760/2))
+# sprites.add(player)
+
+# map = Map((1280/2, 760/2))
+# sprites.add(map)
 
 '''intialize screen and clock'''
 pygame.init()
-# gets variables from userSettings.py
-display = pygame.display.set_mode((displayWidth, displayHeight))
+display = pygame.display.set_mode((1280, 760))
 timer = pygame.time.Clock()
 
-game = Level(1, display)
-sprites = pygame.sprite.Group()
-player = Player((displayWidth/2, displayHeight/2))
-sprites.add(player)
+# declare state/screen loop
+start = True
+gameplay = False
+instructions = False
 
 '''game loop'''
 while True:
 
-    '''look for any user in76put'''
+    '''While in starting screen'''
+    while start:
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                # if the user clicks 'instructions'
+                if btn1Pos[0] <= mouse[0] <= btn1Pos[0]+200 and btn1Pos[1] <= mouse[1] <= btn1Pos[1]+50:
+                    start, gameplay, instructions = False, False, True
+                # if the user clicks 'start'
+                if btn2Pos[0] <= mouse[0] <= btn2Pos[0]+200 and btn2Pos[1] <= mouse[1] <= btn2Pos[1]+50:
+                    display.fill((0, 0, 0))  # resets screen
+                    start, gameplay, instructions = False, True, False
+
+        # get location of mouse (tuple of x y coord)
+        mouse = pygame.mouse.get_pos()
+
+        display.fill((0, 0, 0))  # resets screen
+
+        beginScreen = startScreen(display)
+        beginScreen.run()
+        btn1Pos, btn2Pos = beginScreen.getBtnPos()
+
+        pygame.display.update()
+        timer.tick(60)
+
+    '''While on instruction screen'''
+    while instructions:
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+                pygame.quit()
+                sys.quit()
+            # if user clicks 'back' button moves then back to starting screen
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if btn3Pos[0] <= mouse[0] <= btn3Pos[0]+200 and btn3Pos[1] <= mouse[1] <= btn3Pos[1]+50:
+                    start, gameplay, instructions = True, False, False
+
+        mouse = pygame.mouse.get_pos()
+
+        display.fill((0, 0, 0))  # resets screen
+
+        controlsInfo = instructionScreen(display)
+        controlsInfo.run()
+        btn3Pos = controlsInfo.getBtnPos()
+
+        pygame.display.update()
+        timer.tick(60)
+
+    '''If not on start or instruction screen, gameplay screen'''
+
+    '''look for any user input'''
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
 
     # updates the position of player
-    player.input()
+    # player.input()
+    # map.scroll()
     # resets the screen to black to it covers old sprite image
-    display.fill('black')
     # displays new sprite image
-    sprites.draw(display)
+    # sprites.draw(display)
 
     pygame.display.update()  # update the display
     timer.tick(60)  # for every second 60 frames will pass

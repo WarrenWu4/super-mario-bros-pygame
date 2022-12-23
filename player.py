@@ -1,5 +1,4 @@
 import pygame
-from userSettings import *
 
 
 class Player(pygame.sprite.Sprite):
@@ -29,7 +28,7 @@ class Player(pygame.sprite.Sprite):
 
     def moveRight(self):
         # subtract by width of image to get true wall detection
-        if self.rect.x <= displayWidth-self.image.get_width():
+        if self.rect.x <= 1280-self.image.get_width():
             self.rect.x += 5
 
     def jump(self):
