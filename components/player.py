@@ -5,9 +5,18 @@ class Player(pygame.sprite.Sprite):
     def __init__(self, pos):
         # required by pygame to initialize sprite class
         pygame.sprite.Sprite.__init__(self)
-
         self.image = pygame.image.load('assets\player.png').convert_alpha()
         self.rect = self.image.get_rect(center=pos)
+
+        # movement variables
+        self.direction = 1  # facing right by default
+        self.speed = 5
+        self.gravity = 0.5
+        self.jumpSpeed = 10
+
+        # player status
+        self.dead = False
+        self.ground = False
 
     def input(self):
         keys = pygame.key.get_pressed()

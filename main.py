@@ -1,29 +1,32 @@
 import pygame
 import sys
 
-from startScreen import *
-from instructionScreen import *
+from screens.startScreen import *
+from screens.instructionScreen import *
+from screens.gameScreen import *
 
-from player import *
-from map import *
-
-# sprites = pygame.sprite.Group()
-
-# player = Player((1280/2, 760/2))
-# sprites.add(player)
-
-# map = Map((1280/2, 760/2))
-# sprites.add(map)
+from components.player import *
+from components.map import *
 
 '''intialize screen and clock'''
 pygame.init()
 display = pygame.display.set_mode((1280, 760))
 timer = pygame.time.Clock()
 
-# declare state/screen loop
+'''declare and initialize screen states'''
 start = True
 gameplay = False
 instructions = False
+
+'''initialize gameplay components'''
+middle = (1280/2, 760/2)
+player = Player(middle)
+map = Map()
+
+'''initialize screens'''
+beginScreen = startScreen(display)
+controlsInfo = instructionScreen(display)
+gaming = gameScreen(display, map, player)
 
 '''game loop'''
 while True:
@@ -49,7 +52,6 @@ while True:
 
         display.fill((0, 0, 0))  # resets screen
 
-        beginScreen = startScreen(display)
         beginScreen.run()
         btn1Pos, btn2Pos = beginScreen.getBtnPos()
 
@@ -72,7 +74,6 @@ while True:
 
         display.fill((0, 0, 0))  # resets screen
 
-        controlsInfo = instructionScreen(display)
         controlsInfo.run()
         btn3Pos = controlsInfo.getBtnPos()
 
@@ -80,19 +81,17 @@ while True:
         timer.tick(60)
 
     '''If not on start or instruction screen, gameplay screen'''
+    while gameplay:
 
-    '''look for any user input'''
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+                pygame.quit()
+                sys.exit()
 
-    # updates the position of player
-    # player.input()
-    # map.scroll()
-    # resets the screen to black to it covers old sprite image
-    # displays new sprite image
-    # sprites.draw(display)
+        # resets the screen to blue to it covers old sprite image
+        display.fill((107, 140, 255))
 
-    pygame.display.update()  # update the display
-    timer.tick(60)  # for every second 60 frames will pass
+        gaming.run()
+
+        pygame.display.update()  # update the display
+        timer.tick(60)  # for every second 60 frames will pass
