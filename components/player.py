@@ -5,7 +5,8 @@ class Player(pygame.sprite.Sprite):
     def __init__(self, pos):
         # required by pygame to initialize sprite class
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load('assets\player.png').convert_alpha()
+        self.image = pygame.image.load(
+            'assets\player_idle_right.png').convert_alpha()
         self.rect = self.image.get_rect(center=pos)
 
         # movement variables
@@ -15,6 +16,7 @@ class Player(pygame.sprite.Sprite):
         self.jumpSpeed = 10
 
         # player status
+        self.action = ['idle', 'run', 'jump']
         self.dead = False
         self.ground = False
 
@@ -25,7 +27,7 @@ class Player(pygame.sprite.Sprite):
             self.moveLeft()
         if keys[pygame.K_RIGHT]:
             self.moveRight()
-        if keys[pygame.K_UP] or keys[pygame.K_SPACE]:
+        if (keys[pygame.K_UP] or keys[pygame.K_SPACE]) and self.ground:
             self.jump()
         if keys[pygame.K_DOWN]:
             self.crouch()
