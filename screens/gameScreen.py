@@ -15,8 +15,7 @@ class gameScreen:
         self.playerSprite.add(player)
 
     def run(self):
-        self.map.scroll()
-        self.player.input()
+        self.map.scroll(self.player)
 
         self.mapSprite.draw(self.display)
         self.playerSprite.draw(self.display)

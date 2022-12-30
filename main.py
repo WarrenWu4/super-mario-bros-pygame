@@ -19,8 +19,8 @@ gameplay = False
 instructions = False
 
 '''initialize gameplay components'''
-middle = (1280/2, 760/2)
-player = Player(middle)
+# player starting position is 40 722
+player = Player((40, 722))
 map = Map()
 
 '''initialize screens'''

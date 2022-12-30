@@ -1,4 +1,5 @@
 import pygame
+import math
 
 
 class Map(pygame.sprite.Sprite):
@@ -6,12 +7,32 @@ class Map(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load('assets//map.png').convert_alpha()
         self.rect = self.image.get_rect()
+
+        # positions map at the bottom
         self.rect.y = (760-self.image.get_height())
 
-    def scroll(self):
+    def scroll(self, player):
         keys = pygame.key.get_pressed()
 
-        if keys[pygame.K_RIGHT] and self.rect.x > (1280-self.image.get_width()):
-            self.rect.x -= 5
-        if keys[pygame.K_LEFT] and self.rect.x < 0:
-            self.rect.x += 5
+        # scroll right when right key pressed
+        if keys[pygame.K_RIGHT]:
+            # if player below middle point of left most area of map move player
+            if self.rect.x == 0 and -5 <= player.rect.x <= 640:
+                player.moveRight()
+            # if player above middle point of right most area of map move player
+            elif self.rect.x == round(1280-self.image.get_width(), -1) and 635 <= player.rect.x <= 1280:
+                player.moveRight()
+            else:
+                self.rect.x -= 5
+
+        # scroll left when left key pressed
+        if keys[pygame.K_LEFT]:
+            # if player below middle point of left most area of map move player
+            if self.rect.x == 0 and -5 <= player.rect.x <= 640:
+                player.moveLeft()
+            # if player above middle point of right most area of map move player
+            elif self.rect.x == round(1280-self.image.get_width(), -1) and 635 <= player.rect.x <= 1280:
+                player.moveLeft()
+            # otherwise just move the map
+            else:
+                self.rect.x += 5

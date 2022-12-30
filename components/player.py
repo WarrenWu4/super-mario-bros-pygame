@@ -5,8 +5,12 @@ class Player(pygame.sprite.Sprite):
     def __init__(self, pos):
         # required by pygame to initialize sprite class
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load(
-            'assets\player_idle_right.png').convert_alpha()
+
+        # *sprite path might be different on different os types
+        self.image = pygame.image.load('assets\player_idle_right.png')
+        self.image = pygame.transform.scale(
+            self.image, (self.image.get_width()+10, self.image.get_height()+10))
+        self.image = self.image.convert_alpha()
         self.rect = self.image.get_rect(center=pos)
 
         # movement variables
