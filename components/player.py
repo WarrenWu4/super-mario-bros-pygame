@@ -8,9 +8,7 @@ class Player(pygame.sprite.Sprite):
 
         # *sprite path might be different on different os types
         self.image = pygame.image.load('assets\player_idle_right.png')
-        self.image = pygame.transform.scale(
-            self.image, (self.image.get_width()+10, self.image.get_height()+10))
-        self.image = self.image.convert_alpha()
+        self.scalePlayer()
         self.rect = self.image.get_rect(center=pos)
 
         # movement variables
@@ -27,10 +25,15 @@ class Player(pygame.sprite.Sprite):
     def input(self):
         keys = pygame.key.get_pressed()
 
+        # have player face left and rescale image
         if keys[pygame.K_LEFT]:
-            self.moveLeft()
+            self.image = pygame.image.load('assets\player_idle_left.png')
+            self.scalePlayer()
+        # have player face right and rescale image
         if keys[pygame.K_RIGHT]:
-            self.moveRight()
+            self.image = pygame.image.load('assets\player_idle_right.png')
+            self.scalePlayer()
+
         if (keys[pygame.K_UP] or keys[pygame.K_SPACE]) and self.ground:
             self.jump()
         if keys[pygame.K_DOWN]:
@@ -46,9 +49,8 @@ class Player(pygame.sprite.Sprite):
         if self.rect.x <= 1280-self.image.get_width():
             self.rect.x += 5
 
-    def jump(self):
-        self.rect.y -= 5
-
-    def crouch(self):
-        self.image = pygame.image.load(
-            'assets\player_crouch.png').convert_alpha()
+    def scalePlayer(self):
+        scaledWidth = self.image.get_width() + 10
+        scaledHeight = self.image.get_height() + 10
+        self.image = pygame.transform.scale(
+            self.image, (scaledWidth, scaledHeight))
