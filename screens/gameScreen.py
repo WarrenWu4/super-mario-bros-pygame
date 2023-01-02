@@ -7,12 +7,16 @@ class gameScreen:
         self.display = surface
 
         self.map = map
-        self.mapSprite = pygame.sprite.GroupSingle()
+        self.mapSprite = pygame.sprite.Group()
         self.mapSprite.add(map)
 
         self.player = player
         self.playerSprite = pygame.sprite.GroupSingle()
         self.playerSprite.add(player)
+
+    def floorHoles(self):
+        if self.map.y >= 709:
+            self.player.fall()
 
     def run(self):
         self.map.scroll(self.player)

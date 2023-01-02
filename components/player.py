@@ -54,3 +54,6 @@ class Player(pygame.sprite.Sprite):
         scaledHeight = self.image.get_height() + 10
         self.image = pygame.transform.scale(
             self.image, (scaledWidth, scaledHeight))
+
+    def fall(self):
+        pass
