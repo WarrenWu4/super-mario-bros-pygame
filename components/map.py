@@ -10,7 +10,7 @@ class Map(pygame.sprite.Sprite):
         # positions map at the bottom
         self.rect.y = (760-self.image.get_height())
 
-    def scroll(self, player):
+    def scroll(self, player, speed):
         keys = pygame.key.get_pressed()
 
         # scroll right when right key pressed
@@ -22,7 +22,7 @@ class Map(pygame.sprite.Sprite):
             elif self.rect.x == round(1280-self.image.get_width(), -1) and 620 <= player.rect.x <= 1280:
                 player.moveRight()
             else:
-                self.rect.x -= 5
+                self.rect.x -= speed
 
         # scroll left when left key pressed
         if keys[pygame.K_LEFT]:
@@ -35,4 +35,4 @@ class Map(pygame.sprite.Sprite):
                 player.moveLeft()
             # otherwise just move the map
             else:
-                self.rect.x += 5
+                self.rect.x += speed

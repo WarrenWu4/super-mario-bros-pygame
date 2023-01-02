@@ -24,11 +24,18 @@ class gameScreen:
 
     def run(self):
         if not self.player.dead:
-            self.map.scroll(self.player)
+            self.map.scroll(self.player, self.player.speed)
             self.player.updateStatus()
             self.player.gravity()
             self.player.input()
             self.floorHoles()
+            if self.player.jump:
+                if self.player.jumpHeight >= 0:
+                    self.player.rect.y -= (self.player.jumpHeight)
+                    self.player.jumpHeight -= 1
+                else:
+                    self.player.jumpHeight = 12
+                    self.player.jump = False
 
         self.mapSprite.draw(self.display)
         self.playerSprite.draw(self.display)

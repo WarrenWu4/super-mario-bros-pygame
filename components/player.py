@@ -14,13 +14,14 @@ class Player(pygame.sprite.Sprite):
         # movement variables
         self.direction = 1  # facing right by default
         self.speed = 5
-        self.grav = 5
-        self.jumpHeight = 100
+        self.grav = 3
+        self.jumpHeight = 12
 
         # player status
-        self.action = ['idle', 'run', 'jump']
         self.dead = False
         self.ground = False
+        self.jump = False
+        self.win = False
 
     def updateStatus(self):
         if self.rect.y == 709:
@@ -40,23 +41,27 @@ class Player(pygame.sprite.Sprite):
             self.image = pygame.image.load('assets\player_idle_right.png')
             self.scalePlayer()
 
-        if (keys[pygame.K_UP] or keys[pygame.K_SPACE]) and self.ground:
-            self.jump()
-        if keys[pygame.K_DOWN]:
-            self.crouch()
+        if (keys[pygame.K_UP] or keys[pygame.K_SPACE]) and self.ground and not self.jump:
+            self.jump = True
 
     def moveLeft(self):
         # collision detection with left bound
         if 0 <= self.rect.x:
-            self.rect.x -= 5
+            self.rect.x -= self.speed
 
     def moveRight(self):
         # subtract by width of image to get true wall detection
         if self.rect.x <= 1280-self.image.get_width():
-            self.rect.x += 5
+            self.rect.x += self.speed
 
-    def jump(self):
-        self.rect.y -= self.jumpHeight
+    # def jump(self):
+    #     if self.jumpHeight >= -10:
+    #         # implementing quadratic formula for smoother movement
+    #         self.rect.y -= (self.jumpHeight * abs(self.jumpHeight)) * 0.5
+    #         self.jumpHeight -= 1
+    #     else:
+    #         # reset conditional variables
+    #         self.jumpHeight = 10
 
     def scalePlayer(self):
         scaledWidth = self.image.get_width() + 10
