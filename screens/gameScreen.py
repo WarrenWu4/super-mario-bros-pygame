@@ -14,6 +14,9 @@ class gameScreen:
         self.playerSprite = pygame.sprite.GroupSingle()
         self.playerSprite.add(player)
 
+        self.win = False
+        self.lose = False
+
     def floorHoles(self):
         holeCoords = [(-455, -465), (-730, -755), (-1805, -1815)]
         # check if player is in the right position
@@ -36,6 +39,11 @@ class gameScreen:
                 else:
                     self.player.jumpHeight = 12
                     self.player.jump = False
+
+        if 1144 <= self.player.rect.x <= 1154 and -2105 >= self.map.rect.x >= -2115:
+            self.win = True
+        if self.player.dead:
+            self.lose = True
 
         self.mapSprite.draw(self.display)
         self.playerSprite.draw(self.display)

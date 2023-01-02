@@ -92,10 +92,34 @@ while True:
         display.fill((107, 140, 255))
 
         gaming.run()
-        # if player.dead == True:
-        #     gameplay = False
-        #     pygame.quit()
-        #     sys.exit()
+        # just create a mini screen within gameplay loop based on conditionals
+        if gaming.win:
+            display.fill((0, 0, 0))
+            win = pygame.font.Font(None, 40)
+            winText = win.render(
+                "Congrats on winning! Click to play again", True, 'White')
+            winRect = winText.get_rect(center=(1280/2, 640/2))
+            display.blit(winText, winRect)
+            # get the button 1 state
+            if pygame.mouse.get_pressed()[0]:
+                gaming.win = False
+                map.rect.x = 0
+                player.rect.x = 40
+                player.rect.y = 709
+        if gaming.lose:
+            display.fill((0, 0, 0))
+            lose = pygame.font.Font(None, 40)
+            loseText = lose.render(
+                "Game Over! Click to play again", True, 'White')
+            loseRect = loseText.get_rect(center=(1280/2, 640/2))
+            display.blit(loseText, loseRect)
+            # get the button 1 state
+            if pygame.mouse.get_pressed()[0]:
+                gaming.lose = False
+                player.dead = False
+                map.rect.x = 0
+                player.rect.x = 40
+                player.rect.y = 709
 
         pygame.display.update()  # update the display
         timer.tick(60)  # for every second 60 frames will pass

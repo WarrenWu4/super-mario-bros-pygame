@@ -21,7 +21,6 @@ class Player(pygame.sprite.Sprite):
         self.dead = False
         self.ground = False
         self.jump = False
-        self.win = False
 
     def updateStatus(self):
         if self.rect.y == 709:
