@@ -20,13 +20,13 @@ class gameScreen:
     def floorHoles(self):
         holeCoords = [(-455, -465), (-730, -755), (-1805, -1815)]
         # check if player is in the right position
-        if self.player.ground and self.player.rect.x == 644:
+        if self.player.ground and 644 <= self.player.rect.x <= 645:
             for hole in holeCoords:
                 if hole[0] >= self.map.rect.x >= hole[1]:
                     self.player.fall()
 
     def run(self):
-        if not self.player.dead:
+        if not self.player.dead and not self.win:
             self.map.scroll(self.player, self.player.speed)
             self.player.updateStatus()
             self.player.gravity()

@@ -12,7 +12,7 @@ class Map(pygame.sprite.Sprite):
 
     def scroll(self, player, speed):
         keys = pygame.key.get_pressed()
-
+        print(player.rect.x, self.rect.x)
         # scroll right when right key pressed
         if keys[pygame.K_RIGHT]:
             # if player below middle point of left most area of map move player

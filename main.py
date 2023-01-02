@@ -94,7 +94,6 @@ while True:
         gaming.run()
         # just create a mini screen within gameplay loop based on conditionals
         if gaming.win:
-            display.fill((0, 0, 0))
             win = pygame.font.Font(None, 40)
             winText = win.render(
                 "Congrats on winning! Click to play again", True, 'White')
@@ -107,7 +106,6 @@ while True:
                 player.rect.x = 40
                 player.rect.y = 709
         if gaming.lose:
-            display.fill((0, 0, 0))
             lose = pygame.font.Font(None, 40)
             loseText = lose.render(
                 "Game Over! Click to play again", True, 'White')
