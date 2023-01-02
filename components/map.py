@@ -15,7 +15,6 @@ class Map(pygame.sprite.Sprite):
 
         # scroll right when right key pressed
         if keys[pygame.K_RIGHT]:
-            print(player.rect.x, self.rect.x)
             # if player below middle point of left most area of map move player
             if self.rect.x == 0 and -5 <= player.rect.x <= 640:
                 player.moveRight()
@@ -27,13 +26,12 @@ class Map(pygame.sprite.Sprite):
 
         # scroll left when left key pressed
         if keys[pygame.K_LEFT]:
-            print(player.rect.x, self.rect.x)
             # if player below middle point of left most area of map move player
             # want it to be a bit offcenter so reentry is easier
             if self.rect.x == 0 and -5 <= player.rect.x <= 650:
                 player.moveLeft()
             # if player above middle point of right most area of map move player
-            elif self.rect.x == round(1280-self.image.get_width(), -1) and 635 <= player.rect.x <= 1280:
+            elif self.rect.x == round(1280-self.image.get_width(), -1) and 645 <= player.rect.x <= 1280:
                 player.moveLeft()
             # otherwise just move the map
             else:

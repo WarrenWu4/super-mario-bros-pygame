@@ -15,12 +15,20 @@ class gameScreen:
         self.playerSprite.add(player)
 
     def floorHoles(self):
-        if self.map.y >= 709:
-            self.player.fall()
+        holeCoords = [(-455, -465), (-730, -755), (-1805, -1815)]
+        # check if player is in the right position
+        if self.player.ground and self.player.rect.x == 644:
+            for hole in holeCoords:
+                if hole[0] >= self.map.rect.x >= hole[1]:
+                    self.player.fall()
 
     def run(self):
-        self.map.scroll(self.player)
-        self.player.input()
+        if not self.player.dead:
+            self.map.scroll(self.player)
+            self.player.updateStatus()
+            self.player.gravity()
+            self.player.input()
+            self.floorHoles()
 
         self.mapSprite.draw(self.display)
         self.playerSprite.draw(self.display)

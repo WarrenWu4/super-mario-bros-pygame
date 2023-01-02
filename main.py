@@ -92,6 +92,10 @@ while True:
         display.fill((107, 140, 255))
 
         gaming.run()
+        # if player.dead == True:
+        #     gameplay = False
+        #     pygame.quit()
+        #     sys.exit()
 
         pygame.display.update()  # update the display
         timer.tick(60)  # for every second 60 frames will pass

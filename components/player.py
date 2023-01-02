@@ -14,13 +14,19 @@ class Player(pygame.sprite.Sprite):
         # movement variables
         self.direction = 1  # facing right by default
         self.speed = 5
-        self.gravity = 0.5
-        self.jumpSpeed = 10
+        self.grav = 5
+        self.jumpHeight = 100
 
         # player status
         self.action = ['idle', 'run', 'jump']
         self.dead = False
         self.ground = False
+
+    def updateStatus(self):
+        if self.rect.y == 709:
+            self.ground = True
+        elif self.rect.y != 709:
+            self.ground = False
 
     def input(self):
         keys = pygame.key.get_pressed()
@@ -49,11 +55,21 @@ class Player(pygame.sprite.Sprite):
         if self.rect.x <= 1280-self.image.get_width():
             self.rect.x += 5
 
+    def jump(self):
+        self.rect.y -= self.jumpHeight
+
     def scalePlayer(self):
         scaledWidth = self.image.get_width() + 10
         scaledHeight = self.image.get_height() + 10
         self.image = pygame.transform.scale(
             self.image, (scaledWidth, scaledHeight))
 
+    def gravity(self):
+        if not self.ground:
+            self.rect.y += self.grav
+
     def fall(self):
-        pass
+        self.image = pygame.image.load('assets\player_falling.png')
+        self.scalePlayer()
+        self.rect.y += 25
+        self.dead = True
