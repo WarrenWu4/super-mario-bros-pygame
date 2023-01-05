@@ -7,7 +7,7 @@ from screens.gameScreen import *
 
 '''intialize screen and clock'''
 pygame.init()
-res = (1280, 760)  # screen resolution
+res = (800, 600)  # screen resolution
 screen = pygame.display.set_mode(res)
 timer = pygame.time.Clock()
 
@@ -36,19 +36,13 @@ while not done:
             pygame.quit()  # then quits pygame
             sys.exit()  # then quits the program
 
-    '''if in starting screen'''
-    if startState:
+    '''if in starting or instruction screen'''
+    if startState or instState:
         screen.fill((0, 0, 0))  # resets screen
-        start_screen.run()
+        start_screen.run() if startState else inst_screen.run()
         # check if buttons were pressed
-        startState, gameState, instState = start_screen.checkBtnPress()
-
-    '''if in instruction screen'''
-    if instState:
-        screen.fill((0, 0, 0))  # resets screen
-        inst_screen.run()
-        # check if button was pressed
-        startState, gameState, instState = inst_screen.checkBtnPress()
+        startState, gameState, instState = start_screen.checkBtnPress(
+        ) if startState else inst_screen.checkBtnPress()
 
     '''If not on start or instruction screen, gameplay screen'''
     if gameState:

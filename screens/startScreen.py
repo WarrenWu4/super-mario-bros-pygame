@@ -66,8 +66,8 @@ class startScreen:
                 return (False, False, True)  # navigate to instructions
             if btn2X <= mouseX <= btn2X+self.btnWidth and btn2Y <= mouseY <= btn2Y+self.btnHeight:
                 return (False, True, False)  # navigate to gameplay
-        
-        #otherwise stay on starting screen
+
+        # otherwise stay on starting screen
         return (True, False, False)
 
     def run(self):

@@ -40,8 +40,8 @@ class instructionScreen:
     def backButton(self):
 
         # specify coordinates
-        xPos = self.res[0]/2 - self.btnWidth - 390
-        yPos = self.res[1]/2 + self.btnHeight + 220
+        xPos = self.res[0] - (self.res[0] - 50)
+        yPos = self.res[1] - 110
 
         # create button background
         self.backBtn = [xPos, yPos, self.btnWidth, self.btnHeight]
