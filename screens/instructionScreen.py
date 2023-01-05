@@ -2,44 +2,72 @@ import pygame
 
 
 class instructionScreen:
-    def __init__(self, screen, res, btnColor, headFont, normFont):
+    def __init__(self, screen, res):
+
+        # basic attributes
         self.screen = screen
         self.res = res
-        self.btnColor = btnColor
-        self.headFont = headFont
-        self.normFont = normFont
+
+        # button attributes
+        self.btnColor = (103, 106, 110)
+        self.btnWidth = 200
+        self.btnHeight = 50
+
+        # text attributes
+        self.headFont = pygame.font.Font(None, 40)
+        self.normFont = pygame.font.Font(None, 30)
 
     def instructionText(self):
+        # title text
+        textHeight = 100
         title = "Controls"
         titleText = self.headFont.render(title, True, 'White')
-        titleRect = titleText.get_rect(center=(self.res[0]/2, 100))
+        titleRect = titleText.get_rect(center=(self.res[0]/2, textHeight))
         self.screen.blit(titleText, titleRect)
 
+        # controls text
+        textHeight *= 2
         instructions = ["UP or SPACE or W = Jump", "DOWN or S = Crouch",
                         "LEFT or A = Move Left", "RIGHT or D = Move Right",
                         "J or X = Shoot", "ESC = Exit Game"]
-        height = 200
         for line in instructions:
             instructionText = self.normFont.render(line, True, 'White')
             instructionRect = instructionText.get_rect(
-                center=(self.res[0]/2, height))
+                center=(self.res[0]/2, textHeight))
             self.screen.blit(instructionText, instructionRect)
-            height += 50  # increment height so new text moves down
+            textHeight += 50  # increment height so new text moves down
 
     def backButton(self):
-        # x pos = width/2 - 200 - 200 and y pos = height/2 + 100 + 50
-        self.backBtn = [50, 650, 200, 50]
+
+        # specify coordinates
+        xPos = self.res[0]/2 - self.btnWidth - 390
+        yPos = self.res[1]/2 + self.btnHeight + 220
+
+        # create button background
+        self.backBtn = [xPos, yPos, self.btnWidth, self.btnHeight]
         pygame.draw.rect(self.screen, self.btnColor, self.backBtn)
 
+        # create button text
         backBtnText = self.normFont.render("Back", True, 'White')
-        # center = xpos+(200/2) ypos+(50/2)
-        backBtnRect = backBtnText.get_rect(
-            center=(self.backBtn[0]+100, self.backBtn[1]+25))
+        centerPos = (xPos+(self.btnWidth/2), yPos+(self.btnHeight/2))
+        backBtnRect = backBtnText.get_rect(center=centerPos)
         self.screen.blit(backBtnText, backBtnRect)
 
+    def checkBtnPress(self):
+
+        # for simplicity sake
+        btnX, btnY = self.backBtn[0:2]
+        mouseX, mouseY = pygame.mouse.get_pos()
+
+        # check if the button is pressed
+        if pygame.mouse.get_pressed()[0]:
+            if btnX <= mouseX <= btnX+self.btnWidth and btnY <= mouseY <= btnY+self.btnHeight:
+                return (True, False, False)  # navigate back to starting screen
+
+        # otherwise stay on instruction screen
+        return (False, False, True)
+
     def run(self):
+        # run all texts / buttons
         self.instructionText()
         self.backButton()
-
-    def getBtnPos(self):
-        return self.backBtn[0:2]

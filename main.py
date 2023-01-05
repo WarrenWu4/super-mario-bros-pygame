@@ -11,12 +11,9 @@ res = (1280, 760)  # screen resolution
 screen = pygame.display.set_mode(res)
 timer = pygame.time.Clock()
 
-'''initializing other settings/predefined variables'''
-btnColor = (103, 106, 110)
+'''predefine colors'''
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
-headFont = pygame.font.Font(None, 40)
-normFont = pygame.font.Font(None, 30)
 
 '''declare and initialize screen states'''
 done = False
@@ -26,28 +23,18 @@ instState = False
 
 '''initialize screens'''
 start_screen = startScreen(screen, res)
-inst_screen = instructionScreen(screen, res, btnColor, headFont, normFont)
+inst_screen = instructionScreen(screen, res)
 game_screen = gameScreen(screen)
 
 '''game loop'''
 while not done:
 
-    '''check events globally regardless of state'''
+    '''if user wants to close out of program'''
     for event in pygame.event.get():
         if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
             done = True  # exit out of loop
             pygame.quit()  # then quits pygame
             sys.exit()  # then quits the program
-
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            # get location of mouse (tuple of x y coord)
-            mouse = pygame.mouse.get_pos()
-
-            # state specific event for instructions screen
-            if instState:
-                # if user clicks 'back' button moves then back to starting screen
-                if btn3Pos[0] <= mouse[0] <= btn3Pos[0]+200 and btn3Pos[1] <= mouse[1] <= btn3Pos[1]+50:
-                    startState, gameState, instState = True, False, False
 
     '''if in starting screen'''
     if startState:
@@ -60,7 +47,8 @@ while not done:
     if instState:
         screen.fill((0, 0, 0))  # resets screen
         inst_screen.run()
-        btn3Pos = inst_screen.getBtnPos()
+        # check if button was pressed
+        startState, gameState, instState = inst_screen.checkBtnPress()
 
     '''If not on start or instruction screen, gameplay screen'''
     if gameState:
