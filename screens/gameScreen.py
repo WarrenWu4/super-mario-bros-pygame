@@ -7,7 +7,7 @@ class gameScreen:
         self.display = surface
 
         self.map = map
-        self.mapSprite = pygame.sprite.Group()
+        self.mapSprite = pygame.sprite.GroupSingle()
         self.mapSprite.add(map)
 
         self.player = player

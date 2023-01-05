@@ -10,114 +10,107 @@ from components.map import *
 
 '''intialize screen and clock'''
 pygame.init()
-display = pygame.display.set_mode((1280, 760))
+res = (1280, 760)  # screen resolution
+screen = pygame.display.set_mode(res)
 timer = pygame.time.Clock()
 
+'''initializing other settings/predefined variables'''
+btnColor = (103, 106, 110)
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+headFont = pygame.font.Font(None, 40)
+normFont = pygame.font.Font(None, 30)
+
 '''declare and initialize screen states'''
-start = True
-gameplay = False
-instructions = False
+gameLoop = True
+startState = True
+gameState = False
+instState = False
 
 '''initialize gameplay components'''
 # player starting position is 40 722
-player = Player((40, 722))
+playerStartPos = (40, 722)
+player = Player(playerStartPos)
 map = Map()
 
 '''initialize screens'''
-beginScreen = startScreen(display)
-controlsInfo = instructionScreen(display)
-gaming = gameScreen(display, map, player)
+start_screen = startScreen(screen, res, btnColor, headFont)
+inst_screen = instructionScreen(screen, res, btnColor, headFont, normFont)
+game_screen = gameScreen(screen, map, player)
 
 '''game loop'''
-while True:
+while gameLoop:
 
-    '''While in starting screen'''
-    while start:
+    '''check events globally regardless of state'''
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+            gameLoop = False  # exit out of loop
+            pygame.quit()  # then quits pygame
+            sys.exit()  # then quits the program
 
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
-                pygame.quit()
-                sys.exit()
-            if event.type == pygame.MOUSEBUTTONDOWN:
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            # get location of mouse (tuple of x y coord)
+            mouse = pygame.mouse.get_pos()
+
+            # state specific event for startin screen
+            if startState:
                 # if the user clicks 'instructions'
                 if btn1Pos[0] <= mouse[0] <= btn1Pos[0]+200 and btn1Pos[1] <= mouse[1] <= btn1Pos[1]+50:
-                    start, gameplay, instructions = False, False, True
+                    startState, gameState, instState = False, False, True
                 # if the user clicks 'start'
                 if btn2Pos[0] <= mouse[0] <= btn2Pos[0]+200 and btn2Pos[1] <= mouse[1] <= btn2Pos[1]+50:
-                    display.fill((0, 0, 0))  # resets screen
-                    start, gameplay, instructions = False, True, False
+                    startState, gameState, instState = False, True, False
 
-        # get location of mouse (tuple of x y coord)
-        mouse = pygame.mouse.get_pos()
-
-        display.fill((0, 0, 0))  # resets screen
-
-        beginScreen.run()
-        btn1Pos, btn2Pos = beginScreen.getBtnPos()
-
-        pygame.display.update()
-        timer.tick(60)
-
-    '''While on instruction screen'''
-    while instructions:
-
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
-                pygame.quit()
-                sys.exit()
-            # if user clicks 'back' button moves then back to starting screen
-            if event.type == pygame.MOUSEBUTTONDOWN:
+            # state specific event for instructions screen
+            elif instState:
+                # if user clicks 'back' button moves then back to starting screen
                 if btn3Pos[0] <= mouse[0] <= btn3Pos[0]+200 and btn3Pos[1] <= mouse[1] <= btn3Pos[1]+50:
-                    start, gameplay, instructions = True, False, False
+                    startState, gameState, instState = True, False, False
 
-        mouse = pygame.mouse.get_pos()
+    '''if in starting screen'''
+    if startState:
+        screen.fill((0, 0, 0))  # resets screen
+        start_screen.run()
+        btn1Pos, btn2Pos = start_screen.getBtnPos()
 
-        display.fill((0, 0, 0))  # resets screen
-
-        controlsInfo.run()
-        btn3Pos = controlsInfo.getBtnPos()
-
-        pygame.display.update()
-        timer.tick(60)
+    '''if in instruction screen'''
+    if instState:
+        screen.fill((0, 0, 0))  # resets screen
+        inst_screen.run()
+        btn3Pos = inst_screen.getBtnPos()
 
     '''If not on start or instruction screen, gameplay screen'''
-    while gameplay:
-
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
-                pygame.quit()
-                sys.exit()
-
+    if gameState:
         # resets the screen to blue to it covers old sprite image
-        display.fill((107, 140, 255))
+        screen.fill((107, 140, 255))
+        game_screen.run()
 
-        gaming.run()
         # just create a mini screen within gameplay loop based on conditionals
-        if gaming.win:
+        if game_screen.win:
             win = pygame.font.Font(None, 40)
             winText = win.render(
                 "Congrats on winning! Click to play again", True, 'White')
             winRect = winText.get_rect(center=(1280/2, 640/2))
-            display.blit(winText, winRect)
+            screen.blit(winText, winRect)
             # get the button 1 state
             if pygame.mouse.get_pressed()[0]:
-                gaming.win = False
+                game_screen.win = False
                 map.rect.x = 0
                 player.rect.x = 40
                 player.rect.y = 709
-        if gaming.lose:
+        if game_screen.lose:
             lose = pygame.font.Font(None, 40)
             loseText = lose.render(
                 "Game Over! Click to play again", True, 'White')
             loseRect = loseText.get_rect(center=(1280/2, 640/2))
-            display.blit(loseText, loseRect)
+            screen.blit(loseText, loseRect)
             # get the button 1 state
             if pygame.mouse.get_pressed()[0]:
-                gaming.lose = False
+                game_screen.lose = False
                 player.dead = False
                 map.rect.x = 0
                 player.rect.x = 40
                 player.rect.y = 709
 
-        pygame.display.update()  # update the display
-        timer.tick(60)  # for every second 60 frames will pass
+    pygame.display.update()  # updates the screen
+    timer.tick(60)  # 60 fps
