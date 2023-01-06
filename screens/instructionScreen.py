@@ -16,17 +16,17 @@ class instructionScreen:
         # text attributes
         self.headFont = pygame.font.Font(None, 40)
         self.normFont = pygame.font.Font(None, 30)
+        self.textHeight = 50
 
     def instructionText(self):
         # title text
-        textHeight = 100
         title = "Controls"
         titleText = self.headFont.render(title, True, 'White')
-        titleRect = titleText.get_rect(center=(self.res[0]/2, textHeight))
+        titleRect = titleText.get_rect(center=(self.res[0]/2, self.textHeight))
         self.screen.blit(titleText, titleRect)
 
         # controls text
-        textHeight *= 2
+        textHeight = self.textHeight*2
         instructions = ["UP or SPACE or W = Jump", "DOWN or S = Crouch",
                         "LEFT or A = Move Left", "RIGHT or D = Move Right",
                         "J or X = Shoot", "ESC = Exit Game"]
@@ -48,7 +48,7 @@ class instructionScreen:
         pygame.draw.rect(self.screen, self.btnColor, self.backBtn)
 
         # create button text
-        backBtnText = self.normFont.render("Back", True, 'White')
+        backBtnText = self.headFont.render("Back", True, 'White')
         centerPos = (xPos+(self.btnWidth/2), yPos+(self.btnHeight/2))
         backBtnRect = backBtnText.get_rect(center=centerPos)
         self.screen.blit(backBtnText, backBtnRect)

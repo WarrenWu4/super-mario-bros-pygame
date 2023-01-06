@@ -7,7 +7,7 @@ from screens.gameScreen import *
 
 '''intialize screen and clock'''
 pygame.init()
-res = (800, 600)  # screen resolution
+res = (720, 480)  # screen resolution
 screen = pygame.display.set_mode(res)
 timer = pygame.time.Clock()
 
@@ -24,7 +24,7 @@ instState = False
 '''initialize screens'''
 start_screen = startScreen(screen, res)
 inst_screen = instructionScreen(screen, res)
-game_screen = gameScreen(screen)
+game_screen = gameScreen(screen, res)
 
 '''game loop'''
 while not done:
@@ -56,13 +56,13 @@ while not done:
             overContent = "Congrats on winning! Click to play again" if game_screen.win else "Game Over! Click to play again"
             over = pygame.font.Font(None, 40)
             overText = over.render(overContent, True, 'White')
-            overRect = overText.get_rect(center=(1280/2, 640/2))
+            overRect = overText.get_rect(center=(res[0]/2, res[1]/2))
             screen.blit(overText, overRect)
 
             # get the button 1 state
             if pygame.mouse.get_pressed()[0]:
                 # reset everything by reinitializing
-                game_screen.__init__(screen)
+                game_screen.__init__(screen, res)
 
     pygame.display.update()  # updates the screen
     timer.tick(60)  # 60 fps

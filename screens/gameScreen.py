@@ -27,7 +27,15 @@ class gameScreen:
         self.playerSprite.add(self.player)
 
         # platform sprite attributes
-        self.luckyBlock = Tile()
+        self.platformSprite = pygame.sprite.Group()
+        platformPos = [res[0]/3, 3*res[1]/4]
+        self.blocks = []
+        self.luckyBlock = Tile(platformPos, 'assets/block_mystery.png')
+        self.blocks.append(self.luckyBlock)
+        for i in range(4):
+            platformPos[0] += self.luckyBlock.image.get_width()
+            self.blocks.append(Tile(platformPos, "assets/block_tile.png"))
+        self.platformSprite.add(self.blocks)
 
     def update(self):
         # for simplicity sake
@@ -49,6 +57,8 @@ class gameScreen:
             # otherwise move the map
             else:
                 m.right(p.speed)
+                for block in self.blocks:
+                    block.right(p.speed)
 
         if keys[pygame.K_LEFT]:
             # same logic when moving left
@@ -57,6 +67,8 @@ class gameScreen:
                 p.left(p.speed)
             else:
                 m.left(p.speed)
+                for block in self.blocks:
+                    block.left(p.speed)
 
         # set win to true if player passes castle door
         if m.rect.x == rightBorder and p.rect.x == width-130:
@@ -71,19 +83,22 @@ class gameScreen:
                 if hole[0] >= m.rect.x >= hole[1]:
                     p.falling, self.lose = True, True
 
-    # def collisionDetection(self):
-    #     # set dokill argument to false by default
-    #     # blockCollide = pygame.sprite.collide_rect(self.player)
-    #     # if blockCollide:
-    #     #     self.player.jump = False
-    #     pass
+    def collisionDetection(self):
+        # set dokill argument to false by default
+        blockCollide = pygame.sprite.spritecollide(
+            self.player, self.platformSprite, False)
+        if blockCollide:
+            self.player.jumping = False
+            self.player.jumpCount = 15
 
     def run(self):
         # keep running basic updates as long as no win and no lose
         if not self.win and not self.lose:
             self.update()  # game logic/main input checker
+            self.collisionDetection()  # detects collision between platform and player
             self.map.run()  # map specific functions
             self.player.run()  # player specific functions
 
         self.mapSprite.draw(self.screen)
+        self.platformSprite.draw(self.screen)
         self.playerSprite.draw(self.screen)
