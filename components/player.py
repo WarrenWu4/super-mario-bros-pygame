@@ -19,7 +19,7 @@ class Player(pygame.sprite.Sprite):
 
         # movement variables
         self.direction = 1  # 0 is left 1 is right
-        self.speed = 5
+        self.speed = 4
         self.grav = 5
         self.jumpCount = 15
 

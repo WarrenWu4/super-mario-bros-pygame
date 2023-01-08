@@ -4,6 +4,7 @@ import random
 from components.player import *
 from components.block import *
 from components.fireball import *
+from components.enemy import *
 
 
 class gameScreen:
@@ -29,6 +30,12 @@ class gameScreen:
         self.playerSprite = pygame.sprite.Group()
         self.player = Player(res)
         self.playerSprite.add(self.player)
+
+        """create enemy sprites"""
+        self.enemySprites = pygame.sprite.Group()
+        self.enemies = [Enemy((500, res[1])), Enemy((800, res[1])), Enemy((1400, res[1]))]
+        for enemy in self.enemies:
+            self.enemySprites.add(enemy)
 
         """create platform sprite"""
         self.platformSprite = pygame.sprite.Group()
@@ -78,6 +85,8 @@ class gameScreen:
                 self.map.x -= p.speed
                 for block in self.blocks.values():
                     block.rect.x -= p.speed
+                for enemy in self.enemies:
+                    enemy.rect.x -= p.speed
         if keys[pygame.K_LEFT]:
             # same logic when moving left
             p.direction = 0
@@ -87,6 +96,8 @@ class gameScreen:
                 self.map.x += p.speed
                 for block in self.blocks.values():
                     block.rect.x += p.speed
+                for enemy in self.enemies:
+                    enemy.rect.x += p.speed
         if keys[pygame.K_x] or keys[pygame.K_j]:
             if self.ability and not self.fireball.shoot:
                 self.fireball.rect.x = self.player.rect.x + self.player.image.get_width()/2
@@ -119,6 +130,7 @@ class gameScreen:
         if self.blocks[4].rect.y >= self.player.groundLevel:
             self.item_ground = True
 
+
     def collisions(self):
         """if player collides with platform tiles"""
         platCollide = pygame.sprite.spritecollide(
@@ -137,6 +149,18 @@ class gameScreen:
         if item_collide and self.item_ground:
             self.itemSprite.remove(self.blocks[4])
             self.ability = True
+
+        """ if player collides with enemy """
+        for enemy in self.enemies:
+            if not enemy.dead and self.player.ground:
+                if pygame.sprite.collide_rect(enemy, self.player):
+                    self.player.falling, self.lose = True, True
+
+        """ if fireball collides with enemy """
+        # for enemy in self.enemies:
+        #     if not enemy.dead:
+        #         if pygame.sprite.collide_rect(enemy, self.fireballSprite):
+        #             enemy.fall()
 
     def run(self):
         """draws the map as background"""
@@ -157,6 +181,7 @@ class gameScreen:
             self.fireball.fire(self.player.direction, self.player.speed)
             self.fireballSprite.draw(self.screen)
         self.playerSprite.draw(self.screen)
+        self.enemySprites.draw(self.screen)
 
         """keep running basic updates as long as no win and no lose"""
         if not self.win and not self.lose:
@@ -164,3 +189,7 @@ class gameScreen:
             self.logic()  # runs the game logic
             self.collisions()  # detects collision between platform and player
             self.player.run()  # player specific functions
+            for enemy in self.enemies:
+                enemy.run(self.player)
+        
+        
