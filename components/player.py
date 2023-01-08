@@ -8,7 +8,6 @@ class Player(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load('assets/player_idle_right.png')
         self.rect = self.image.get_rect()
-        self.scalePlayer()
 
         # basic attributes
         self.res = res
@@ -28,12 +27,6 @@ class Player(pygame.sprite.Sprite):
         self.jumping = False
         self.falling = False
         self.ground = True
-
-    def scalePlayer(self):
-        scaledWidth = self.image.get_width() + 10
-        scaledHeight = self.image.get_height() + 10
-        self.image = pygame.transform.scale(
-            self.image, (scaledWidth, scaledHeight))
 
     '''Checking Functions'''
 
@@ -95,8 +88,6 @@ class Player(pygame.sprite.Sprite):
         # if falling (directionless)
         if self.falling:
             self.image = pygame.image.load('assets/player_falling.png')
-        # scale image at the end
-        self.scalePlayer()
 
     def run(self):
         # check action functions
