@@ -83,11 +83,13 @@ class gameScreen:
 
         rightOfPipe = False
         leftOfPipe = False
+        self.player.onPipe = False
         collision_tolerance = 6
         for pipe in self.pipes:
             if self.player.rect.colliderect(pipe.rect):
                 if abs(pipe.rect.top - self.player.rect.bottom) < collision_tolerance:
                     self.player.rect.bottom = pipe.rect.top
+                    self.player.onPipe = True
                 elif abs(pipe.rect.left - self.player.rect.right) < collision_tolerance:
                     rightOfPipe = True
                 elif abs(pipe.rect.right - self.player.rect.left) < collision_tolerance:
