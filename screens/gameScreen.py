@@ -81,18 +81,23 @@ class gameScreen:
         # check input
         keys = pygame.key.get_pressed()
 
-        nextToPipe = False
+        rightOfPipe = False
+        leftOfPipe = False
+        collision_tolerance = 6
         for pipe in self.pipes:
-            if pygame.sprite.collide_rect(self.player, pipe):
-                nextToPipe = True
-
+            if self.player.rect.colliderect(pipe.rect):
+                if abs(pipe.rect.left - self.player.rect.right) < collision_tolerance:
+                    rightOfPipe = True
+                if abs(pipe.rect.right - self.player.rect.left) < collision_tolerance:
+                    leftOfPipe = True
+                
         if keys[pygame.K_RIGHT]:
             # update player facing direction
             p.direction = 1
             # if player is on the leftmost edge of map and not halfway up OR
             # if player is on the rightmost edge of map and not halfway down
             # +5 for reentry purposes exiting edge will result in p.rect.x == width/2
-            if not nextToPipe:
+            if not rightOfPipe:
                 if m.x == 0 and p.rect.x+5 <= width/2 or m.x == rightBorder and p.rect.x >= width/2:
                     p.right(p.speed)
                 # otherwise move the map
@@ -107,20 +112,21 @@ class gameScreen:
         if keys[pygame.K_LEFT]:
             # same logic when moving left
             p.direction = 0
-            if m.x == 0 and p.rect.x <= width/2 or m.x == rightBorder and p.rect.x-5 >= width/2:
-                p.left(p.speed)
-            else:
-                self.map.x += p.speed
-                for block in self.blocks.values():
-                    block.rect.x += p.speed
-                for enemy in self.enemies:
-                    enemy.rect.x += p.speed
-                for pipe in self.pipes:
-                    pipe.rect.x += p.speed
+            if not leftOfPipe:
+                if m.x == 0 and p.rect.x <= width/2 or m.x == rightBorder and p.rect.x-5 >= width/2:
+                    p.left(p.speed)
+                else:
+                    self.map.x += p.speed
+                    for block in self.blocks.values():
+                        block.rect.x += p.speed
+                    for enemy in self.enemies:
+                        enemy.rect.x += p.speed
+                    for pipe in self.pipes:
+                        pipe.rect.x += p.speed
         if keys[pygame.K_x] or keys[pygame.K_j]:
             if self.ability and not self.fireball.shoot:
                 self.fireball.rect.x = self.player.rect.x + self.player.image.get_width()/2
-                self.fireball.rect.y = self.player.rect.centery 
+                self.fireball.rect.y = self.player.rect.centery
                 self.fireball.shoot = True
 
     def logic(self):
@@ -177,7 +183,7 @@ class gameScreen:
 
         """ if fireball collides with enemy """
         for enemy in self.enemies:
-            if not enemy.dead:
+            if not enemy.dead and self.fireball.shoot:
                 if pygame.sprite.collide_rect(self.fireball, enemy):
                     enemy.fall()
 
@@ -187,6 +193,7 @@ class gameScreen:
 
         """scale any image/sprites"""
         self.player.image = pygame.transform.scale(self.player.image, (23, 26))
+        # self.player.rect = self.player.image.get_rect()
         for block in self.blocks.values():
             block.image = pygame.transform.scale(block.image, (21, 21))
         self.fireball.image = pygame.transform.scale(

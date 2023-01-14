@@ -20,7 +20,7 @@ class Enemy(pygame.sprite.Sprite):
             self.direction += 1
    
     def steppedOn(self, player):
-        if pygame.sprite.collide_rect(self, player) and (self.rect.top >= player.rect.centery + 2):
+        if pygame.sprite.collide_rect(self, player) and (self.rect.top >= player.rect.centery):
             self.fall()
 
     def fall(self):
