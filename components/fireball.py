@@ -8,8 +8,8 @@ class Fireball(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
 
         self.rect.x = pos[0]
-        self.rect.y = pos[1]
-        self.abilityCounter = 15
+        self.rect.y = pos[1] 
+        self.abilityCounter = 20
         self.shoot = False
 
     def fire(self, direction, speed):
@@ -22,4 +22,4 @@ class Fireball(pygame.sprite.Sprite):
                 self.abilityCounter -= 1
             else:
                 self.shoot = False
-                self.abilityCounter = 15
+                self.abilityCounter = 20

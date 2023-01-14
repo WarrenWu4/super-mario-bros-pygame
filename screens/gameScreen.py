@@ -5,6 +5,7 @@ from components.player import *
 from components.block import *
 from components.fireball import *
 from components.enemy import *
+from components.pipe import *
 
 
 class gameScreen:
@@ -36,6 +37,13 @@ class gameScreen:
         self.enemies = [Enemy((500, res[1])), Enemy((800, res[1])), Enemy((1400, res[1]))]
         for enemy in self.enemies:
             self.enemySprites.add(enemy)
+
+        """create pipe sprite"""
+        self.pipeSprites = pygame.sprite.Group()
+        # 450 610 735 910 1280 1645 1810 2605 2865 
+        self.pipes = generatePipes()
+        for pipe in self.pipes:
+            self.pipeSprites.add(pipe)
 
         """create platform sprite"""
         self.platformSprite = pygame.sprite.Group()
@@ -72,21 +80,30 @@ class gameScreen:
 
         # check input
         keys = pygame.key.get_pressed()
+
+        nextToPipe = False
+        for pipe in self.pipes:
+            if pygame.sprite.collide_rect(self.player, pipe):
+                nextToPipe = True
+
         if keys[pygame.K_RIGHT]:
             # update player facing direction
             p.direction = 1
             # if player is on the leftmost edge of map and not halfway up OR
             # if player is on the rightmost edge of map and not halfway down
             # +5 for reentry purposes exiting edge will result in p.rect.x == width/2
-            if m.x == 0 and p.rect.x+5 <= width/2 or m.x == rightBorder and p.rect.x >= width/2:
-                p.right(p.speed)
-            # otherwise move the map
-            else:
-                self.map.x -= p.speed
-                for block in self.blocks.values():
-                    block.rect.x -= p.speed
-                for enemy in self.enemies:
-                    enemy.rect.x -= p.speed
+            if not nextToPipe:
+                if m.x == 0 and p.rect.x+5 <= width/2 or m.x == rightBorder and p.rect.x >= width/2:
+                    p.right(p.speed)
+                # otherwise move the map
+                else:
+                    self.map.x -= p.speed
+                    for block in self.blocks.values():
+                        block.rect.x -= p.speed
+                    for enemy in self.enemies:
+                        enemy.rect.x -= p.speed
+                    for pipe in self.pipes:
+                        pipe.rect.x -= p.speed
         if keys[pygame.K_LEFT]:
             # same logic when moving left
             p.direction = 0
@@ -98,10 +115,12 @@ class gameScreen:
                     block.rect.x += p.speed
                 for enemy in self.enemies:
                     enemy.rect.x += p.speed
+                for pipe in self.pipes:
+                    pipe.rect.x += p.speed
         if keys[pygame.K_x] or keys[pygame.K_j]:
             if self.ability and not self.fireball.shoot:
                 self.fireball.rect.x = self.player.rect.x + self.player.image.get_width()/2
-                self.fireball.rect.y = self.player.rect.y
+                self.fireball.rect.y = self.player.rect.centery 
                 self.fireball.shoot = True
 
     def logic(self):
@@ -118,10 +137,10 @@ class gameScreen:
         """check holes"""
         holeCoords = [(-745, -755), (-1015, -1040), (-2090, -2095)]
         # check if player is in the right position
-        if self.player.ground and self.player.rect.x == self.res[0]/2:
+        if self.player.ground:
             # loop through to see if player has fallen in hole
             for hole in holeCoords:
-                if hole[0] >= self.map.x >= hole[1]:
+                if hole[0] >= self.map.x >= hole[1] and self.player.rect.x == self.res[0]/2:
                     self.player.falling, self.lose = True, True
 
         """applies gravity to item"""
@@ -157,10 +176,10 @@ class gameScreen:
                     self.player.falling, self.lose = True, True
 
         """ if fireball collides with enemy """
-        # for enemy in self.enemies:
-        #     if not enemy.dead:
-        #         if pygame.sprite.collide_rect(enemy, self.fireballSprite):
-        #             enemy.fall()
+        for enemy in self.enemies:
+            if not enemy.dead:
+                if pygame.sprite.collide_rect(self.fireball, enemy):
+                    enemy.fall()
 
     def run(self):
         """draws the map as background"""
@@ -182,7 +201,7 @@ class gameScreen:
             self.fireballSprite.draw(self.screen)
         self.playerSprite.draw(self.screen)
         self.enemySprites.draw(self.screen)
-
+        self.pipeSprites.draw(self.screen)
         """keep running basic updates as long as no win and no lose"""
         if not self.win and not self.lose:
             self.input()  # input checker
@@ -191,5 +210,6 @@ class gameScreen:
             self.player.run()  # player specific functions
             for enemy in self.enemies:
                 enemy.run(self.player)
+
         
         
