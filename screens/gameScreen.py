@@ -86,11 +86,12 @@ class gameScreen:
         collision_tolerance = 6
         for pipe in self.pipes:
             if self.player.rect.colliderect(pipe.rect):
-                if abs(pipe.rect.left - self.player.rect.right) < collision_tolerance:
+                if abs(pipe.rect.top - self.player.rect.bottom) < collision_tolerance:
+                    self.player.rect.bottom = pipe.rect.top
+                elif abs(pipe.rect.left - self.player.rect.right) < collision_tolerance:
                     rightOfPipe = True
-                if abs(pipe.rect.right - self.player.rect.left) < collision_tolerance:
+                elif abs(pipe.rect.right - self.player.rect.left) < collision_tolerance:
                     leftOfPipe = True
-                
         if keys[pygame.K_RIGHT]:
             # update player facing direction
             p.direction = 1
