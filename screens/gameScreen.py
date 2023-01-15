@@ -34,7 +34,7 @@ class gameScreen:
 
         """create enemy sprites"""
         self.enemySprites = pygame.sprite.Group()
-        self.enemies = [Enemy((500, res[1])), Enemy((800, res[1])), Enemy((1400, res[1]))]
+        self.enemies = generateEnemies(self.res)
         for enemy in self.enemies:
             self.enemySprites.add(enemy)
 
@@ -129,7 +129,7 @@ class gameScreen:
         if keys[pygame.K_x] or keys[pygame.K_j]:
             if self.ability and not self.fireball.shoot:
                 self.fireball.rect.x = self.player.rect.x + self.player.image.get_width()/2
-                self.fireball.rect.y = self.player.rect.centery
+                self.fireball.rect.y = self.player.rect.y + 5
                 self.fireball.shoot = True
 
     def logic(self):
@@ -189,6 +189,11 @@ class gameScreen:
             if not enemy.dead and self.fireball.shoot:
                 if pygame.sprite.collide_rect(self.fireball, enemy):
                     enemy.fall()
+        
+        for enemy in self.enemies:
+            for pipe in self.pipes:
+                if pygame.sprite.collide_rect(enemy, pipe):
+                    enemy.changeDirection()
 
     def run(self):
         """draws the map as background"""
@@ -196,7 +201,6 @@ class gameScreen:
 
         """scale any image/sprites"""
         self.player.image = pygame.transform.scale(self.player.image, (23, 26))
-        # self.player.rect = self.player.image.get_rect()
         for block in self.blocks.values():
             block.image = pygame.transform.scale(block.image, (21, 21))
         self.fireball.image = pygame.transform.scale(
@@ -212,6 +216,7 @@ class gameScreen:
         self.playerSprite.draw(self.screen)
         self.enemySprites.draw(self.screen)
         self.pipeSprites.draw(self.screen)
+        print(self.player.rect.x + (self.map.x * -1))
         """keep running basic updates as long as no win and no lose"""
         if not self.win and not self.lose:
             self.input()  # input checker

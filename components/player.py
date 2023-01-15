@@ -17,7 +17,7 @@ class Player(pygame.sprite.Sprite):
         self.rect.y = res[1]-50
         self.groundLevel = res[1]-50
         self.rect.width = 23
-        self.rect.height = 20
+        self.rect.height = 30
 
         # movement variables
         self.direction = 1  # 0 is left 1 is right
