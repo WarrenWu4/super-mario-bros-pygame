@@ -216,7 +216,6 @@ class gameScreen:
         self.playerSprite.draw(self.screen)
         self.enemySprites.draw(self.screen)
         self.pipeSprites.draw(self.screen)
-        print(self.player.rect.x + (self.map.x * -1))
         """keep running basic updates as long as no win and no lose"""
         if not self.win and not self.lose:
             self.input()  # input checker
