@@ -25,15 +25,21 @@ class Enemy(pygame.sprite.Sprite):
     def steppedOn(self, player):
         if pygame.sprite.collide_rect(self, player) and (self.rect.top >= player.rect.centery):
             self.fall()
+            
 
     def fall(self):
-        self.rect.y += 5
-        self.image = pygame.image.load('assets/enemy_dead.png')
         self.dead = True
+        self.rect.y += 1
+        self.image = pygame.image.load('assets/enemy_dead.png')
+        if self.rect.y == 1000:
+            self.dead = False
+        
 
     def run(self, player):
         self.walk()
         self.steppedOn(player)
+        if self.dead:
+            self.fall()
 
 def generateEnemies(res):
     return [
