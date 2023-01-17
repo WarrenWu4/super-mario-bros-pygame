@@ -1,11 +1,8 @@
 import pygame
-import random
 
 from components.player import *
 from components.block import *
-from components.fireball import *
 from components.enemy import *
-from components.pipe import *
 
 
 class gameScreen:
@@ -21,6 +18,7 @@ class gameScreen:
         self.item_fall = False
         self.item_ground = False
         self.ability = False
+        self.blocks = []
 
         """creates the map and gives default position"""
         self.map_image = pygame.image.load("assets/map.png")
@@ -37,35 +35,32 @@ class gameScreen:
         self.enemies = generateEnemies(self.res)
         for enemy in self.enemies:
             self.enemySprites.add(enemy)
+            self.blocks.append(enemy)
 
         """create pipe sprite"""
         self.pipeSprites = pygame.sprite.Group()
-        # 450 610 735 910 1280 1645 1810 2605 2865 
-        self.pipes = generatePipes()
+        self.pipes = Block.generatePipes()
         for pipe in self.pipes:
             self.pipeSprites.add(pipe)
+            self.blocks.append(pipe)
 
         """create platform sprite"""
         self.platformSprite = pygame.sprite.Group()
-        platformPos = [res[0]/3, 3*res[1]/4]
-        self.blocks, self.lucky = {}, random.randint(0, 3)
-        for i in range(4):
-            if i == self.lucky:
-                self.blocks[i] = Block(platformPos, "assets/block_mystery.png")
-            else:
-                self.blocks[i] = Block(platformPos, "assets/block_tile.png")
-            platformPos[0] += 21
-        self.platformSprite.add(self.blocks.values())
+        self.platform = Block.generatePlatform()
+        for block in self.platform:
+            self.platformSprite.add(block)
+            self.blocks.append(block)
 
         """create item sprite"""
         self.itemSprite = pygame.sprite.Group()
-        itemPos = self.blocks[self.lucky].rect[0:2]
-        self.blocks[4] = Block(itemPos, "assets/power_flower.png")
-        self.itemSprite.add(self.blocks[4])
+        self.item = Block((303, 360), "assets/power_flower.png")
+        self.itemSprite.add(self.item)
+        self.blocks.append(self.item)
 
         """fireball sprite"""
         self.fireballSprite = pygame.sprite.Group()
-        self.fireball = Fireball(self.player.rect[0:2])
+        self.fireball = Block(
+            self.player.rect[0:2], "assets/power_fireball.png")
         self.fireballSprite.add(self.fireball)
 
         """declare some more convienent variables"""
@@ -94,6 +89,7 @@ class gameScreen:
                     rightOfPipe = True
                 elif abs(pipe.rect.right - self.player.rect.left) < collision_tolerance:
                     leftOfPipe = True
+
         if keys[pygame.K_RIGHT]:
             # update player facing direction
             p.direction = 1
@@ -106,12 +102,9 @@ class gameScreen:
                 # otherwise move the map
                 else:
                     self.map.x -= p.speed
-                    for block in self.blocks.values():
-                        block.rect.x -= p.speed
-                    for enemy in self.enemies:
-                        enemy.rect.x -= p.speed
-                    for pipe in self.pipes:
-                        pipe.rect.x -= p.speed
+                    for entity in self.blocks:
+                        entity.rect.x -= p.speed
+
         if keys[pygame.K_LEFT]:
             # same logic when moving left
             p.direction = 0
@@ -120,12 +113,9 @@ class gameScreen:
                     p.left(p.speed)
                 else:
                     self.map.x += p.speed
-                    for block in self.blocks.values():
-                        block.rect.x += p.speed
-                    for enemy in self.enemies:
-                        enemy.rect.x += p.speed
-                    for pipe in self.pipes:
-                        pipe.rect.x += p.speed
+                    for entity in self.blocks:
+                        entity.rect.x += p.speed
+
         if keys[pygame.K_x] or keys[pygame.K_j]:
             if self.ability and not self.fireball.shoot:
                 self.fireball.rect.x = self.player.rect.x + self.player.image.get_width()/2
@@ -153,11 +143,10 @@ class gameScreen:
                     self.player.falling, self.lose = True, True
 
         """applies gravity to item"""
-        if self.item_fall and self.blocks[4].rect.y < self.player.groundLevel:
-            self.blocks[4].rect.y += self.player.grav
-        if self.blocks[4].rect.y >= self.player.groundLevel:
+        if self.item_fall and self.item.rect.y < self.player.groundLevel:
+            self.item.rect.y += self.player.grav
+        if self.item.rect.y >= self.player.groundLevel:
             self.item_ground = True
-
 
     def collisions(self):
         """if player collides with platform tiles"""
@@ -169,13 +158,14 @@ class gameScreen:
 
         """if player collides with mystery block"""
         blockCollide = pygame.sprite.collide_rect(
-            self.player, self.blocks[self.lucky])
+            self.player, self.platform[3])
         if blockCollide:
             self.show_item = True
             self.item_fall = True
-        item_collide = pygame.sprite.collide_rect(self.player, self.blocks[4])
+        item_collide = pygame.sprite.collide_rect(
+            self.player, self.item)
         if item_collide and self.item_ground:
-            self.itemSprite.remove(self.blocks[4])
+            self.itemSprite.remove(self.item)
             self.ability = True
 
         """ if player collides with enemy """
@@ -189,7 +179,7 @@ class gameScreen:
             if not enemy.dead and self.fireball.shoot:
                 if pygame.sprite.collide_rect(self.fireball, enemy):
                     enemy.fall()
-        
+
         for enemy in self.enemies:
             for pipe in self.pipes:
                 if pygame.sprite.collide_rect(enemy, pipe):
@@ -201,7 +191,7 @@ class gameScreen:
 
         """scale any image/sprites"""
         self.player.image = pygame.transform.scale(self.player.image, (23, 26))
-        for block in self.blocks.values():
+        for block in self.platform:
             block.image = pygame.transform.scale(block.image, (21, 21))
         self.fireball.image = pygame.transform.scale(
             self.fireball.image, (18, 18))
@@ -211,19 +201,17 @@ class gameScreen:
         if self.show_item:
             self.itemSprite.draw(self.screen)
         if self.fireball.shoot:
-            self.fireball.fire(self.player.direction, self.player.speed)
+            self.fireball.shootFire(self.player.direction, self.player.speed)
             self.fireballSprite.draw(self.screen)
         self.playerSprite.draw(self.screen)
         self.enemySprites.draw(self.screen)
         self.pipeSprites.draw(self.screen)
+
         """keep running basic updates as long as no win and no lose"""
         if not self.win and not self.lose:
             self.input()  # input checker
             self.logic()  # runs the game logic
-            self.collisions()  # detects collision between platform and player
+            self.collisions()  # detects collisions
             self.player.run()  # player specific functions
             for enemy in self.enemies:
                 enemy.run(self.player)
-
-        
-        

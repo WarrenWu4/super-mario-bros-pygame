@@ -11,10 +11,6 @@ res = (720, 480)  # screen resolution
 screen = pygame.display.set_mode(res)
 timer = pygame.time.Clock()
 
-'''predefine colors'''
-BLACK = (0, 0, 0)
-WHITE = (255, 255, 255)
-
 '''declare and initialize screen states'''
 done = False
 startState = True
