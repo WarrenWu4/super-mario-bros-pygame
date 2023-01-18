@@ -12,6 +12,8 @@ class Block(pygame.sprite.Sprite):
         self.rect.y = pos[1]
 
         # state variables for item objects
+        self.show_item = False
+        self.ability = False
         self.shoot = False
         self.abilityCounter = 20
 

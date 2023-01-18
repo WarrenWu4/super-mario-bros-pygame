@@ -26,6 +26,7 @@ class Player(pygame.sprite.Sprite):
         self.jumpCount = 15
 
         # player states
+        self.blocked = 0  # 0 = not blocked 1 = left blocked 2 = right blocked
         self.jumping = False
         self.falling = False
         self.ground = True
