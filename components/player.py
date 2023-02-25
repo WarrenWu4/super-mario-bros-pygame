@@ -34,11 +34,6 @@ class Player(pygame.sprite.Sprite):
 
     '''Checking Functions'''
 
-    def checkInput(self):
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_UP] and (self.ground or self.onPipe):
-            self.jumping = True
-
     def checkGround(self):
         if self.rect.y == self.groundLevel:
             self.ground = True
