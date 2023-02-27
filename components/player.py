@@ -96,4 +96,3 @@ class Player(pygame.sprite.Sprite):
 
         # check checking functions
         self.checkGround()
-        self.checkInput()
